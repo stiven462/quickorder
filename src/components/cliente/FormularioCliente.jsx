@@ -53,7 +53,7 @@ export function FormularioCliente({ clienteAEditar, onGuardar, onCancelar, guard
   const esEdicion = Boolean(clienteAEditar);
 
   return (
-    <div className="card-form-container">
+    <div className="card-form-container cliente-form-container">
       <div className="form-header">
         <h3 className="form-title">
           {esEdicion ? '✏️ Editar Cliente' : '➕ Registrar Nuevo Cliente'}

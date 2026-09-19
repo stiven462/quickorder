@@ -573,6 +573,66 @@
   margin-top: 2px;
 }
 
+.cliente-form-container {
+  background: linear-gradient(135deg, #fffdf7 0%, #ffffff 58%, #f0fdfa 100%);
+  border: 1px solid #b9e6dc;
+  border-left: 5px solid #0f766e;
+  border-radius: 14px;
+  padding: 30px;
+  box-shadow: 0 14px 30px rgba(15, 118, 110, 0.1);
+}
+
+.cliente-form-container .form-header {
+  border-bottom-color: #d7eee9;
+}
+
+.cliente-form-container .form-title {
+  color: #134e4a;
+}
+
+.cliente-form-container .form-label {
+  color: #285e5a;
+}
+
+.cliente-form-container .form-input {
+  background-color: rgba(255, 255, 255, 0.82);
+  border-color: #c8e3de;
+  border-radius: 8px;
+}
+
+.cliente-form-container .form-input:hover {
+  border-color: #8accc0;
+}
+
+.cliente-form-container .form-input:focus {
+  border-color: #0f766e;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
+}
+
+.cliente-form-container .btn-save {
+  background-color: #0f766e;
+  border-radius: 8px;
+  box-shadow: 0 6px 14px rgba(15, 118, 110, 0.18);
+}
+
+.cliente-form-container .btn-save:hover {
+  background-color: #115e59;
+  box-shadow: 0 8px 18px rgba(15, 118, 110, 0.25);
+}
+
+.cliente-form-container .btn-cancel {
+  background-color: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+  border-radius: 8px;
+}
+
+.cliente-form-container .btn-cancel:hover {
+  background-color: #ffedd5;
+  color: #7c2d12;
+}
+
 .product-form {
   display: flex;
   flex-direction: column;
