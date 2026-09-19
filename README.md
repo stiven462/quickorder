@@ -1,3 +1,7 @@
+# QuickOrder
+
+Aplicación web para gestionar catálogo, productos, clientes, usuarios y estados de orden.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
