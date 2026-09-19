@@ -18,10 +18,20 @@ import { obtenerClientes } from './services/clientService';
 import { obtenerEstadosOrden } from './services/orderStatusService';
 import { obtenerUsuarios } from './services/userService';
 import { obtenerInformacion } from './services/informationService';
+import {
+  agregarAlCarrito,
+  actualizarCantidadProducto,
+  calcularSubtotalCarrito,
+  confirmarCarrito,
+  eliminarDelCarrito,
+  obtenerTotalCarrito,
+} from './services/cartService';
 
 function App() {
   const [categoriaActiva, setCategoriaActiva] = useState("Inicio");
+  const [carrito, setCarrito] = useState([]);
   const [cartCount, setCartCount] = useState(0);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -126,13 +136,39 @@ function App() {
     cargarInformacion();
   }, []);
 
-  const handleAddToCart = () => {
-    setCartCount((prev) => prev + 1);
+  useEffect(() => {
+    setCartCount(obtenerTotalCarrito(carrito));
+  }, [carrito]);
+
+  const handleAddToCart = (producto) => {
+    setCarrito((prev) => agregarAlCarrito(prev, producto));
+    setIsCartOpen(true);
   };
 
   const handleSeleccionarCategoriaFooter = (cat) => {
     setCategoriaActiva(cat);
     navigate('/');
+  };
+
+  const subtotal = calcularSubtotalCarrito(carrito);
+
+  const handleActualizarCantidad = (productoId, cantidad) => {
+    setCarrito((prev) => actualizarCantidadProducto(prev, productoId, cantidad));
+  };
+
+  const handleEliminarProducto = (productoId) => {
+    setCarrito((prev) => eliminarDelCarrito(prev, productoId));
+  };
+
+  const handleConfirmarPedido = async () => {
+    try {
+      await confirmarCarrito(carrito, { nombre: 'Cliente' });
+      setCarrito([]);
+      setIsCartOpen(false);
+      alert('Pedido confirmado correctamente.');
+    } catch (error) {
+      alert(error.message || 'No se pudo confirmar el pedido.');
+    }
   };
 
   return (
@@ -142,7 +178,67 @@ function App() {
         categoriaActiva={categoriaActiva} 
         onSelectCategoria={setCategoriaActiva}
         cartCount={cartCount}
+        onOpenCart={() => setIsCartOpen(true)}
       />
+
+      {isCartOpen && (
+        <div className="cart-overlay" onClick={() => setIsCartOpen(false)}>
+          <aside className="cart-panel" onClick={(event) => event.stopPropagation()}>
+            <div className="cart-panel-header">
+              <div>
+                <span className="cart-panel-label">Mi pedido</span>
+                <h3>Carrito</h3>
+              </div>
+              <button type="button" className="cart-close-btn" onClick={() => setIsCartOpen(false)}>
+                ✕
+              </button>
+            </div>
+
+            {carrito.length === 0 ? (
+              <div className="cart-empty-state">
+                <p>Tu carrito está vacío.</p>
+                <span>Agrega productos para continuar.</span>
+              </div>
+            ) : (
+              <>
+                <div className="cart-items-list">
+                  {carrito.map((item) => (
+                    <div key={item.id ?? item.nombre} className="cart-item">
+                      <div className="cart-item-image">
+                        {item.imagen ? <img src={item.imagen} alt={item.nombre} /> : <span>🍔</span>}
+                      </div>
+
+                      <div className="cart-item-info">
+                        <h4>{item.nombre}</h4>
+                        <p>$ {Number(item.precio || 0).toLocaleString('es-CO')}</p>
+                        <div className="cart-item-controls">
+                          <button type="button" onClick={() => handleActualizarCantidad(item.id ?? item.nombre, Number(item.cantidad || 1) - 1)}>-</button>
+                          <span>{item.cantidad}</span>
+                          <button type="button" onClick={() => handleActualizarCantidad(item.id ?? item.nombre, Number(item.cantidad || 1) + 1)}>+</button>
+                        </div>
+                      </div>
+
+                      <button type="button" className="cart-item-remove" onClick={() => handleEliminarProducto(item.id ?? item.nombre)}>
+                        Eliminar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="cart-summary">
+                  <div>
+                    <span>Subtotal</span>
+                    <strong>$ {subtotal.toLocaleString('es-CO')}</strong>
+                  </div>
+                  <button type="button" className="cart-confirm-btn" onClick={handleConfirmarPedido}>
+                    Confirmar pedido
+                  </button>
+                </div>
+              </>
+            )}
+          </aside>
+        </div>
+      )}
       
       <main className="app-container">
         <Routes>

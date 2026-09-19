@@ -5,7 +5,8 @@ export function Header({
   categorias = [], 
   categoriaActiva, 
   onSelectCategoria, 
-  cartCount = 0 
+  cartCount = 0,
+  onOpenCart
 }) {
   const location = useLocation();
   const esCatalogo = location.pathname === '/';
@@ -106,7 +107,7 @@ export function Header({
           </div>
 
           {esCatalogo && (
-            <button className="cart-button">
+            <button type="button" className="cart-button" onClick={onOpenCart}>
               <span className="cart-icon">🛒</span>
               <span className="cart-label">Mi Pedido</span>
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
