@@ -1,14 +1,22 @@
+import { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu } from './Menu';
+import { Carrito } from './Carrito';
 
-export function Header({ 
-  categorias = [], 
-  categoriaActiva, 
-  onSelectCategoria, 
-  cartCount = 0 
+export function Header({
+  categorias = [],
+  categoriaActiva,
+  onSelectCategoria,
+  cartCount = 0,
+  carrito = [],
+  onIncrementar,
+  onDecrementar,
+  onEliminarDelCarrito,
+  onVaciarCarrito
 }) {
   const location = useLocation();
   const esCatalogo = location.pathname === '/';
+  const [carritoAbierto, setCarritoAbierto] = useState(false);
 
   return (
     <header className="header-navbar">
@@ -106,11 +114,23 @@ export function Header({
           </div>
 
           {esCatalogo && (
-            <button className="cart-button">
-              <span className="cart-icon">🛒</span>
-              <span className="cart-label">Mi Pedido</span>
-              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-            </button>
+            <div className="cart-wrapper">
+              <button className="cart-button" onClick={() => setCarritoAbierto((prev) => !prev)}>
+                <span className="cart-icon">🛒</span>
+                <span className="cart-label">Mi Pedido</span>
+                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+              </button>
+
+              <Carrito
+                carrito={carrito}
+                abierto={carritoAbierto}
+                onCerrar={() => setCarritoAbierto(false)}
+                onIncrementar={onIncrementar}
+                onDecrementar={onDecrementar}
+                onEliminar={onEliminarDelCarrito}
+                onVaciar={onVaciarCarrito}
+              />
+            </div>
           )}
         </div>
       </div>

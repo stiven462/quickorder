@@ -30,9 +30,9 @@ export function Product({ indice, nombre, descripcion, precio, imagen, tag, stoc
                                 : `$ ${precio || 0}`}
                         </span>
                     </div>
-                    <button 
-                        className="btn-add-order" 
-                        onClick={() => !agotado && onAddToCart && onAddToCart(nombre)}
+                    <button
+                        className="btn-add-order"
+                        onClick={() => !agotado && onAddToCart && onAddToCart({ id: indice, nombre, precio, imagen, stock })}
                         disabled={agotado}
                         style={agotado ? { opacity: 0.6, cursor: 'not-allowed', backgroundColor: '#94a3b8' } : {}}
                     >

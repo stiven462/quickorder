@@ -21,7 +21,7 @@ import { obtenerInformacion } from './services/informationService';
 
 function App() {
   const [categoriaActiva, setCategoriaActiva] = useState("Inicio");
-  const [cartCount, setCartCount] = useState(0);
+  const [carrito, setCarrito] = useState([]);
 
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -126,9 +126,55 @@ function App() {
     cargarInformacion();
   }, []);
 
-  const handleAddToCart = () => {
-    setCartCount((prev) => prev + 1);
+  const handleAddToCart = (producto) => {
+    setCarrito((prev) => {
+      const existente = prev.find((item) => item.id === producto.id);
+      const stockMaximo = producto.stock !== undefined && producto.stock !== null
+        ? Number(producto.stock)
+        : Infinity;
+
+      if (existente) {
+        if (existente.cantidad >= stockMaximo) return prev;
+        return prev.map((item) =>
+          item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
+        );
+      }
+
+      if (stockMaximo <= 0) return prev;
+      return [...prev, { ...producto, cantidad: 1 }];
+    });
   };
+
+  const handleIncrementarCantidad = (id) => {
+    setCarrito((prev) =>
+      prev.map((item) => {
+        if (item.id !== id) return item;
+        const stockMaximo = item.stock !== undefined && item.stock !== null
+          ? Number(item.stock)
+          : Infinity;
+        if (item.cantidad >= stockMaximo) return item;
+        return { ...item, cantidad: item.cantidad + 1 };
+      })
+    );
+  };
+
+  const handleDecrementarCantidad = (id) => {
+    setCarrito((prev) =>
+      prev
+        .map((item) => (item.id === id ? { ...item, cantidad: item.cantidad - 1 } : item))
+        .filter((item) => item.cantidad > 0)
+    );
+  };
+
+  const handleEliminarDelCarrito = (id) => {
+    setCarrito((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleVaciarCarrito = () => {
+    setCarrito([]);
+  };
+
+  const cartCount = carrito.reduce((total, item) => total + item.cantidad, 0);
 
   const handleSeleccionarCategoriaFooter = (cat) => {
     setCategoriaActiva(cat);
@@ -137,11 +183,16 @@ function App() {
 
   return (
     <div className="app-layout">
-      <Header 
+      <Header
         categorias={categorias}
-        categoriaActiva={categoriaActiva} 
+        categoriaActiva={categoriaActiva}
         onSelectCategoria={setCategoriaActiva}
         cartCount={cartCount}
+        carrito={carrito}
+        onIncrementar={handleIncrementarCantidad}
+        onDecrementar={handleDecrementarCantidad}
+        onEliminarDelCarrito={handleEliminarDelCarrito}
+        onVaciarCarrito={handleVaciarCarrito}
       />
       
       <main className="app-container">
